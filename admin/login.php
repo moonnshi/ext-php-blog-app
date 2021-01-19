@@ -14,6 +14,7 @@ if($_POST){
     if($user['password']==$password){
       $_SESSION['user_id']=$user['id'];
       $_SESSION['user_name']=$user['name'];
+      $_SESSION['role']=$user['role'];
       $_SESSION['logged_in']=time();
       header('Location:index.php');
     }
@@ -31,11 +32,11 @@ if($_POST){
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="../pluginsfontawesome-free/css/all.min.css">
+  <link rel="stylesheet" href="../../plugins/fontawesome-free/css/all.min.css">
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
   <!-- icheck bootstrap -->
-  <link rel="stylesheet" href="../pluginsicheck-bootstrap/icheck-bootstrap.min.css">
+  <link rel="stylesheet" href="../../plugins/icheck-bootstrap/icheck-bootstrap.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
   <!-- Google Font: Source Sans Pro -->
