@@ -39,7 +39,7 @@ require '../config/config.php';
             <?php
 
               $pageno=(!empty($_GET['pageno']))?$_GET['pageno']:'1';
-              $numOfRec=1;
+              $numOfRec=5;
               $offset=($pageno-1)*$numOfRec;
 
               if(empty($_POST['search']) && (empty($_COOKIE['search']))){
