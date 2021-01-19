@@ -4,6 +4,9 @@ require '../config/config.php';
   if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
     header('Location:login.php');
   }
+  if(!empty($_SESSION['user_id']) && $_SESSION['role']!=1){
+    header('Location:login.php');
+  }
 
   // get post by id
   $statement=$pdo->prepare("SELECT * FROM posts WHERE id=".$_GET['id']);
@@ -41,7 +44,7 @@ require '../config/config.php';
   }
 ?>
 
-<?php include('header.html')?>
+<?php include('header.php')?>
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
       <!-- Content Header (Page header) -->
@@ -59,7 +62,7 @@ require '../config/config.php';
                 <div class="form-group">
                   <input type="hidden" name="id" value="<?= $result[0]['id'] ?>" />
                   <label for="title">Title</label>
-                  <input type="text" class="form-control" name="title" value="<?php echo $result[0]['text']?>" placeholder="Enter blog title"/>
+                  <input type="text" class="form-control" name="title" value="<?php echo $result[0]['title']?>" placeholder="Enter blog title"/>
                 </div>
                 <div class="form-group">
                   <label for="content">Content</label>
