@@ -1,3 +1,41 @@
+<?php
+  require 'config/config.php';
+  session_start();
+  if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
+    header('Location:login.php');
+}
+?>
+<?php
+
+  $pageno=(!empty($_GET['pageno']))?$_GET['pageno']:'1';
+  $numOfRec=6;
+  $offset=($pageno-1)*$numOfRec;
+
+  if(empty($_POST['search'])){
+    $statement=$pdo->prepare('SELECT * from posts ORDER BY id DESC ');
+    $statement->execute();
+    $rawResults=$statement->fetchAll();
+    $total_pages=ceil(count($rawResults)/$numOfRec);
+
+    $statement=$pdo->prepare("SELECT * from posts ORDER BY id DESC LIMIT $offset,$numOfRec");
+    $statement->execute();
+    $results=$statement->fetchAll();
+
+  }
+  else{
+    $search=$_POST['search'];
+    $statement=$pdo->prepare("SELECT * from posts WHERE title LIKE '%$search%' ORDER BY id DESC ");
+    $statement->execute();
+    $rawResults=$statement->fetchAll();
+    $total_pages=ceil(count($rawResults)/$numOfRec);
+
+    $statement=$pdo->prepare("SELECT * from posts WHERE title LIKE '%$search%' ORDER BY id DESC LIMIT $offset,$numOfRec");
+    $statement->execute();
+    $results=$statement->fetchAll();
+
+  }
+
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,94 +56,77 @@
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
   <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-
-    <!-- SEARCH FORM -->
-    <form class="form-inline ml-7">
-      <div class="input-group input-group-sm">
-        <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
-        <div class="input-group-append">
-          <button class="btn btn-navbar" type="submit">
-            <i class="fas fa-search"></i>
-          </button>
-        </div>
-      </div>
-    </form>
-  </nav>
+  <!-- <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+  </nav> -->
   <!-- /.navbar -->
 
   <!-- Content Wrapper. Contains page content -->
-  <div >
+  <div class="content-wrapper" style="margin-left:0px !important">
     <!-- Main content -->
     <section class="content">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header" >
-                <div style="text-align:center;float:none;" class="card-title">
-                  <h4 >Blog Title</h4>
+          <?php if($results):?>
+            <?php $i=1; foreach ($results as $post):?>
+              <div class="col-md-4">
+                <!-- Box Comment -->
+                <div class="card card-widget">
+                  <div class="card-header" >
+                    <div style="text-align:center;float:none;" class="card-title">
+                      <h4 ><?= $post['title'] ?></h4>
+                    </div>
+                  </div>
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                    <a href="blogDetail.php?id=<?= $post['id'] ?>"> <img class="img-fluid pad" src="../images/<?php echo $post['image']?>" style="height:200px !important" alt="Photo"></a>
+                  </div>
+                  <!-- /.card-body -->
                 </div>
+                <!-- /.card -->
               </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
-              </div>
-              <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header">
-                <h4 style="text-align:center;float:none;">Blog Title</h4>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
-              </div>
-              <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header">
-                <h4 style="text-align:center;float:none;">Blog Title</h4>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
-              </div>
-              <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
+              <!-- /.col -->
+          <?php $i++; endforeach; ?>
+          <?php endIf;?>
+
         </div>
         <!-- /.row -->
+        <!-- paginator -->
+        <div class="row" style="float:right;margin-right:0px">
+          <nav aria-label="Page navigation example" >
+            <ul class="pagination">
+              <li class="page-item"><a class="page-link" href="index.php?pageno=1">First</a></li>
+              <li class="page-item" <?php if($pageno <= 1){ echo 'disabled';}?> >
+                <a class="page-link" href="<?php echo ($pageno <= 1)? '#' : 'index.php?pageno='.$pageno-1 ?>">Previous</a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="#"><?= $pageno ?></a>
+              </li>
+              <li class="page-item" <?php if($pageno >= $total_pages){ echo 'enabled';} ?> >
+                  <a class="page-link" href="<?php echo ($pageno >= $total_pages)? '#' :'index.php?pageno='.$pageno+1; ?>">Next</a>
+              </li>
+              <li class="page-item"><a class="page-link" href="index.php?pageno=<?= $total_pages ;?>">Last</a></li>
+            </ul>
+          </nav>
+        </div>
+        <!-- /.paginator -->
       </div><!-- /.container-fluid -->
-    </section>
+    </section><br>
     <!-- /.content -->
-
     <a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
       <i class="fas fa-chevron-up"></i>
     </a>
   </div>
   <!-- /.content-wrapper -->
 
-  <footer class="main-footer" style="margin-left:0px;important">
-    <div class="float-right d-none d-sm-block">
-      <b>Version</b> 3.0.5
-    </div>
-    <strong>Copyright &copy; 2021 <a href="#">A Programmer</a>.</strong> All rights
-    reserved.
-  </footer>
+
+    <footer class="main-footer" style="margin-left:0px !important">
+      <div class="float-right d-none d-sm-inline">
+        <a href="logout.php" type="button" class="btn btn-default">Logout</a>
+      </div>
+      <strong>Copyright &copy; 2021 <a href="#">A Programmer</a>.</strong> All rights
+      reserved.
+    </footer>
+
 
   <!-- Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">
