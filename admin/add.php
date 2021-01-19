@@ -4,7 +4,9 @@ require '../config/config.php';
   if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
     header('Location:login.php');
   }
-
+  if(!empty($_SESSION['user_id']) && $_SESSION['role']!=1){
+    header('Location:login.php');
+  }
   if($_POST){
     $file='../images/'.($_FILES['image']['name']);
     $imageType=pathinfo($file,PATHINFO_EXTENSION);
@@ -32,7 +34,7 @@ require '../config/config.php';
   }
 ?>
 
-<?php include('header.html')?>
+<?php include('header.php')?>
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
       <!-- Content Header (Page header) -->
