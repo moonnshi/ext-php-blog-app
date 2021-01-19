@@ -93,7 +93,7 @@ require '../config/config.php';
                               <a href="edit.php?id=<?php echo $post['id']?>" class="btn btn-warning">Edit</a>
                             </div>
                             <div class="container">
-                              <a href="delete.php?id=<?php echo $post['id']?>" onclick="return confirm('Are you want to delete this blog?')" class="btn btn-danger">Delete</a>
+                              <a href="delete.php?id=<?php echo $post['id']?>" onclick="return confirm('Do you want to delete this blog?')" class="btn btn-danger">Delete</a>
                             </div>
                           </div>
                         </td>
