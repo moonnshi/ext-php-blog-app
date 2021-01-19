@@ -41,7 +41,7 @@ require '../config/config.php';
             <!-- /.card-header -->
             <?php
               $pageno=(!empty($_GET['pageno']))?$_GET['pageno']:'1'; // get pageno from request param
-              $numOfRec=3;
+              $numOfRec=5;
               $offset=($pageno-1)*$numOfRec; // get offeset from pagesize and pageno
 
               if(empty($_POST['search']) && (empty($_COOKIE['search']))){ // if no search key, retrieve all blog posts
