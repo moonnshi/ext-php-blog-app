@@ -1,9 +1,10 @@
 <?php
-  require 'config/config.php';
   session_start();
+  require 'config/config.php';
+
   if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
     header('Location:login.php');
-}
+  }
 ?>
 <?php
 
@@ -32,10 +33,9 @@
     $statement=$pdo->prepare("SELECT * from posts WHERE title LIKE '%$search%' ORDER BY id DESC LIMIT $offset,$numOfRec");
     $statement->execute();
     $results=$statement->fetchAll();
-
   }
-
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>

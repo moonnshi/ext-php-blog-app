@@ -1,47 +1,50 @@
 <?php
-session_start();
-require 'config/config.php';
-if($_POST){
-  if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || (strlen($_POST['password'])<4)){
-    $nameError=empty($_POST['name'])? 'Name is required.':'';
-    $emailError=empty($_POST['email'])? 'Email is required.':'';
-    if(empty($_POST['password'])){
-      $passwordError='Password is required.';
-    }
-    elseif (strlen($_POST['password'])<4) {
-      $passwordError='Password should be at least 4 characters.';
-    }
-    else{
-      $passwordError='';
-    }
-  }else{
-    $name=$_POST['name'];
-    $email=$_POST['email'];
-    $password=password_hash($_POST['password'],PASSWORD_DEFAULT);
 
-    $statement=$pdo->prepare("SELECT * FROM users WHERE email=:email");
-    $statement->bindValue(':email',$email);
-    $statement->execute();
-    $user=$statement->fetch(PDO::FETCH_ASSOC);
+  session_start();
+  require 'config/config.php';
+  require 'config/common.php';
 
-    if($user){
-      echo("<script>alert('Email already existed.');</script>");
-    }
-    else{
-      $statement = $pdo->prepare("INSERT INTO users (name,email,password) VALUES (:name,:email,:password)");
-      $result = $statement->execute(
-        array(
-          ':name'=>$name,
-          ':email'=>$email,
-          ':password'=>$password,
-          )
-        );
-      if($result){
-          echo("<script>alert('Successfully registerd. You can login now.');window.location.href='login.php'</script>");
+  if($_POST){
+    if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || (strlen($_POST['password'])<4)){
+      $nameError=empty($_POST['name'])? 'Name is required.':'';
+      $emailError=empty($_POST['email'])? 'Email is required.':'';
+      if(empty($_POST['password'])){
+        $passwordError='Password is required.';
+      }
+      elseif (strlen($_POST['password'])<4) {
+        $passwordError='Password should be at least 4 characters.';
+      }
+      else{
+        $passwordError='';
+      }
+    }else{
+      $name=$_POST['name'];
+      $email=$_POST['email'];
+      $password=password_hash($_POST['password'],PASSWORD_DEFAULT);
+
+      $statement=$pdo->prepare("SELECT * FROM users WHERE email=:email");
+      $statement->bindValue(':email',$email);
+      $statement->execute();
+      $user=$statement->fetch(PDO::FETCH_ASSOC);
+
+      if($user){
+        echo("<script>alert('Email already existed.');</script>");
+      }
+      else{
+        $statement = $pdo->prepare("INSERT INTO users (name,email,password) VALUES (:name,:email,:password)");
+        $result = $statement->execute(
+          array(
+            ':name'=>$name,
+            ':email'=>$email,
+            ':password'=>$password,
+            )
+          );
+        if($result){
+            echo("<script>alert('Successfully registerd. You can login now.');window.location.href='login.php'</script>");
+        }
       }
     }
   }
-}
 ?>
 
 <!DOCTYPE html>
@@ -73,6 +76,7 @@ if($_POST){
     <div class="card-body login-card-body">
       <p class="login-box-msg">Register New Account</p>
       <form action="register.php" method="post">
+        <input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
         <p style="color:red;"><?= !empty($nameError)?'*'.$nameError:''; ?><p>
         <div class="input-group mb-3">
           <input type="text" name="name" class="form-control" placeholder="Name">

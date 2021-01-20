@@ -1,6 +1,6 @@
 <?php
-require '../config/config.php';
 
+  require '../config/config.php';
   session_start();
 
   // if no login sesion, back to login

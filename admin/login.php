@@ -1,26 +1,29 @@
 <?php
-session_start();
-require '../config/config.php';
-if($_POST){
-  $email=$_POST['email'];
-  $password=$_POST['password'];
 
-  $statement=$pdo->prepare("SELECT * FROM users WHERE email=:email");
-  $statement->bindValue(':email',$email);
-  $statement->execute();
-  $user=$statement->fetch(PDO::FETCH_ASSOC);
+  session_start();
+  require '../config/config.php';
+  require '../config/common.php';
 
-  if($user){
-    if(password_verify($password,$user['password'])){
-      $_SESSION['user_id']=$user['id'];
-      $_SESSION['user_name']=$user['name'];
-      $_SESSION['role']=$user['role'];
-      $_SESSION['logged_in']=time();
-      header('Location:index.php');
+  if($_POST){
+    $email=$_POST['email'];
+    $password=$_POST['password'];
+
+    $statement=$pdo->prepare("SELECT * FROM users WHERE email=:email");
+    $statement->bindValue(':email',$email);
+    $statement->execute();
+    $user=$statement->fetch(PDO::FETCH_ASSOC);
+
+    if($user){
+      if(password_verify($password,$user['password'])){
+        $_SESSION['user_id']=$user['id'];
+        $_SESSION['user_name']=$user['name'];
+        $_SESSION['role']=$user['role'];
+        $_SESSION['logged_in']=time();
+        header('Location:index.php');
+      }
     }
+    echo("<script>alert('Incorrect Credentials');</script>");
   }
-  echo("<script>alert('Incorrect Credentials');</script>");
-}
 ?>
 
 <!DOCTYPE html>
@@ -52,6 +55,7 @@ if($_POST){
     <div class="card-body login-card-body">
       <p class="login-box-msg">Sign in to start your session</p>
       <form action="login.php" method="post">
+        <input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
         <div class="input-group mb-3">
           <input type="email" name="email" class="form-control" placeholder="Email">
           <div class="input-group-append">
