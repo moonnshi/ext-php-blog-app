@@ -15,27 +15,25 @@
   $statement->execute();
   $comments=$statement->fetchAll();
 
-  //$auth_id=$comments[0]['author_id'];
-  // $auth_id=1;
-  // $statement=$pdo->prepare("SELECT * FROM users WHERE id=".$auth_id);
-  // $statement->execute();
-  // $auResult=$statement->fetchAll();
-
   // post comment
   $post_id=$_GET['id'];
   if($_POST){
-    $comment=$_POST['comment'];
-    $author_id=$_SESSION['user_id'];
-    $statement = $pdo->prepare("INSERT INTO comments (content,author_id,post_id) VALUES (:content,:author_id,:post_id)");
-    $result = $statement->execute(
-      array(
-        ':content'=>$comment,
-        ':author_id'=>$author_id,
-        ':post_id'=>$post_id
-      )
-    );
-    if($result){
-      header('Location:blogDetail.php?id='.$post_id);
+    if( empty($_POST['comment']) ){
+      $commentError=empty($_POST['comment'])? 'Comment cannot be empty.':'';
+    }else{
+      $comment=$_POST['comment'];
+      $author_id=$_SESSION['user_id'];
+      $statement = $pdo->prepare("INSERT INTO comments (content,author_id,post_id) VALUES (:content,:author_id,:post_id)");
+      $result = $statement->execute(
+        array(
+          ':content'=>$comment,
+          ':author_id'=>$author_id,
+          ':post_id'=>$post_id
+        )
+      );
+      if($result){
+        header('Location:blogDetail.php?id='.$post_id);
+      }
     }
   }
 
@@ -112,6 +110,7 @@
                 <form action="#" method="post">
                   <!-- .img-push is used to add margin to elements next to floating images -->
                   <div class="img-push">
+                    <p style="color:red;"><?= !empty($commentError)?'*'.$commentError:''; ?><p>
                     <input type="text" name="comment" class="form-control form-control-sm" placeholder="Press enter to post comment">
                   </div>
                 </form>

@@ -2,29 +2,43 @@
 session_start();
 require 'config/config.php';
 if($_POST){
-  $name=$_POST['name'];
-  $email=$_POST['email'];
-  $password=$_POST['password'];
+  if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || (strlen($_POST['password'])<4)){
+    $nameError=empty($_POST['name'])? 'Name is required.':'';
+    $emailError=empty($_POST['email'])? 'Email is required.':'';
+    if(empty($_POST['password'])){
+      $passwordError='Password is required.';
+    }
+    elseif (strlen($_POST['password'])<4) {
+      $passwordError='Password should be at least 4 characters.';
+    }
+    else{
+      $passwordError='';
+    }
+  }else{
+    $name=$_POST['name'];
+    $email=$_POST['email'];
+    $password=$_POST['password'];
 
-  $statement=$pdo->prepare("SELECT * FROM users WHERE email=:email");
-  $statement->bindValue(':email',$email);
-  $statement->execute();
-  $user=$statement->fetch(PDO::FETCH_ASSOC);
+    $statement=$pdo->prepare("SELECT * FROM users WHERE email=:email");
+    $statement->bindValue(':email',$email);
+    $statement->execute();
+    $user=$statement->fetch(PDO::FETCH_ASSOC);
 
-  if($user){
-    echo("<script>alert('Email already existed.');</script>");
-  }
-  else{
-    $statement = $pdo->prepare("INSERT INTO users (name,email,password) VALUES (:name,:email,:password)");
-    $result = $statement->execute(
-      array(
-        ':name'=>$name,
-        ':email'=>$email,
-        ':password'=>$password,
-        )
-      );
-    if($result){
-        echo("<script>alert('Successfully registerd. You can login now.');window.location.href='login.php'</script>");
+    if($user){
+      echo("<script>alert('Email already existed.');</script>");
+    }
+    else{
+      $statement = $pdo->prepare("INSERT INTO users (name,email,password) VALUES (:name,:email,:password)");
+      $result = $statement->execute(
+        array(
+          ':name'=>$name,
+          ':email'=>$email,
+          ':password'=>$password,
+          )
+        );
+      if($result){
+          echo("<script>alert('Successfully registerd. You can login now.');window.location.href='login.php'</script>");
+      }
     }
   }
 }
@@ -59,6 +73,7 @@ if($_POST){
     <div class="card-body login-card-body">
       <p class="login-box-msg">Register New Account</p>
       <form action="register.php" method="post">
+        <p style="color:red;"><?= !empty($nameError)?'*'.$nameError:''; ?><p>
         <div class="input-group mb-3">
           <input type="text" name="name" class="form-control" placeholder="Name">
           <div class="input-group-append">
@@ -67,6 +82,7 @@ if($_POST){
             </div>
           </div>
         </div>
+        <p style="color:red;"><?= !empty($emailError)?'*'.$emailError:''; ?><p>
         <div class="input-group mb-3">
           <input type="email" name="email" class="form-control" placeholder="Email">
           <div class="input-group-append">
@@ -75,6 +91,7 @@ if($_POST){
             </div>
           </div>
         </div>
+        <p style="color:red;"><?= !empty($passwordError)?'*'.$passwordError:''; ?><p>
         <div class="input-group mb-3">
           <input type="password" name="password" class="form-control" placeholder="Password">
           <div class="input-group-append">

@@ -15,19 +15,34 @@ require '../config/config.php';
 
   // update post
   if($_POST){
-    $id=$_POST['id'];
-    $name=$_POST['name'];
-    $email=$_POST['email'];
-    $password=$_POST['password'];
-    $role=(!empty($_POST['role']))?1:0; // check admin or user role
+    if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || (strlen($_POST['password'])<4)){
+      $nameError=empty($_POST['name'])? 'Name is required.':'';
+      $emailError=empty($_POST['email'])? 'Email is required.':'';
+      if(empty($_POST['password'])){
+        $passwordError='Password is required.';
+      }
+      elseif (strlen($_POST['password'])<4) {
+        $passwordError='Password should be at least 4 characters.';
+      }
+      else{
+        $passwordError='';
+      }
+    }
+    else{
+      $id=$_POST['id'];
+      $name=$_POST['name'];
+      $email=$_POST['email'];
+      $password=$_POST['password'];
+      $role=(!empty($_POST['role']))?1:0; // check admin or user role
 
-    $statement=$pdo->prepare("SELECT * FROM users WHERE email=:email AND id!=:id");
-    $statement->execute(array(':email'=>$email,':id'=>$id));
-    $user=$statement->fetch(PDO::FETCH_ASSOC);
-    $statement = $pdo->prepare("UPDATE users SET name='$name',email='$email',password='$password',role='$role' WHERE id='$id'");
-    $result = $statement->execute();
-    if($result){
-     echo("<script>alert('Successfully updated.');window.location.href='user_list.php'</script>");
+      $statement=$pdo->prepare("SELECT * FROM users WHERE email=:email AND id!=:id");
+      $statement->execute(array(':email'=>$email,':id'=>$id));
+      $user=$statement->fetch(PDO::FETCH_ASSOC);
+      $statement = $pdo->prepare("UPDATE users SET name='$name',email='$email',password='$password',role='$role' WHERE id='$id'");
+      $result = $statement->execute();
+      if($result){
+       echo("<script>alert('Successfully updated.');window.location.href='user_list.php'</script>");
+    }
   }
 }
 
@@ -49,16 +64,19 @@ require '../config/config.php';
               <form action="#" method="post">
                 <div class="form-group">
                   <label for="name">Name</label>
+                  <p style="color:red;"><?= !empty($nameError)?'*'.$nameError:''; ?><p>
                   <input type="hidden" name="id" value="<?= $user[0]['id']?>" />
                   <input type="text" class="form-control" name="name" value="<?= $user[0]['name']?>" placeholder="Enter name."/>
                 </div>
                 <div class="form-group">
                   <label for="email">Email</label>
-                  <input type="email" class="form-control"  name="email" value="<?= $user[0]['email']?>" placeholder="Enter email." required/>
+                  <p style="color:red;"><?= !empty($emailError)?'*'.$emailError:''; ?><p>
+                  <input type="email" class="form-control"  name="email" value="<?= $user[0]['email']?>" placeholder="Enter email." />
                 </div>
                 <div class="form-group">
                   <label for="password">Password</label>
-                  <input type="password" class="form-control" name="password" value="<?= $user[0]['password']?>" placeholder="Enter password." required>
+                  <p style="color:red;"><?= !empty($passwordError)?'*'.$passwordError:''; ?><p>
+                  <input type="password" class="form-control" name="password" value="<?= $user[0]['password']?>" placeholder="Enter password." >
                 </div>
                 <div class="form-group">
                   <label for="role">Is admin?</label>

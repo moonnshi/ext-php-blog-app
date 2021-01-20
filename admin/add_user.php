@@ -4,39 +4,54 @@ require '../config/config.php';
   if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
     header('Location:login.php');
   }
-  
+
   if(!empty($_SESSION['user_id']) && $_SESSION['role']!=1){
     header('Location:login.php');
   }
 
   if($_POST){
-    $name=$_POST['name'];
-    $email=$_POST['email'];
-    $password=$_POST['password'];
-
-    // check admin or user role
-    $role=(!empty($_POST['role']))?1:0;
-
-    $statement=$pdo->prepare("SELECT * FROM users WHERE email=:email");
-    $statement->bindValue(':email',$email);
-    $statement->execute();
-    $user=$statement->fetch(PDO::FETCH_ASSOC);
-
-    if($user){
-      echo("<script>alert('Email already existed.');</script>");
+    if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || (strlen($_POST['password'])<4)){
+      $nameError=empty($_POST['name'])? 'Name is required.':'';
+      $emailError=empty($_POST['email'])? 'Email is required.':'';
+      if(empty($_POST['password'])){
+        $passwordError='Password is required.';
+      }
+      elseif (strlen($_POST['password'])<4) {
+        $passwordError='Password should be at least 4 characters.';
+      }
+      else{
+        $passwordError='';
+      }
     }
     else{
-      $statement = $pdo->prepare("INSERT INTO users (name,email,password,role) VALUES (:name,:email,:password,:role)");
-      $result = $statement->execute(
-        array(
-          ':name'=>$name,
-          ':email'=>$email,
-          ':password'=>$password,
-          ':role'=>$role
-          )
-        );
-      if($result){
-          echo("<script>alert('Successfully added.');window.location.href='user_list.php'</script>");
+      $name=$_POST['name'];
+      $email=$_POST['email'];
+      $password=$_POST['password'];
+
+      // check admin or user role
+      $role=(!empty($_POST['role']))?1:0;
+
+      $statement=$pdo->prepare("SELECT * FROM users WHERE email=:email");
+      $statement->bindValue(':email',$email);
+      $statement->execute();
+      $user=$statement->fetch(PDO::FETCH_ASSOC);
+
+      if($user){
+        echo("<script>alert('Email already existed.');</script>");
+      }
+      else{
+        $statement = $pdo->prepare("INSERT INTO users (name,email,password,role) VALUES (:name,:email,:password,:role)");
+        $result = $statement->execute(
+          array(
+            ':name'=>$name,
+            ':email'=>$email,
+            ':password'=>$password,
+            ':role'=>$role
+            )
+          );
+        if($result){
+            echo("<script>alert('Successfully added.');window.location.href='user_list.php'</script>");
+        }
       }
     }
   }
@@ -58,15 +73,18 @@ require '../config/config.php';
               <form action="add_user.php" method="post" >
                 <div class="form-group">
                   <label for="title">Name</label>
+                  <p style="color:red;"><?= !empty($nameError)?'*'.$nameError:''; ?><p>
                   <input type="text" class="form-control" name="name" placeholder="Enter name."/>
                 </div>
                 <div class="form-group">
                   <label for="content">Email</label>
-                  <input type="email" class="form-control"  name="email" placeholder="Enter email." required/>
+                  <p style="color:red;"><?= !empty($emailError)?'*'.$emailError:''; ?><p>
+                  <input type="email" class="form-control"  name="email" placeholder="Enter email." />
                 </div>
                 <div class="form-group">
                   <label for="content">Password</label>
-                  <input type="password" class="form-control" name="password" placeholder="Enter password." required>
+                  <p style="color:red;"><?= !empty($passwordError)?'*'.$passwordError:''; ?><p>
+                  <input type="password" class="form-control" name="password" placeholder="Enter password." >
                 </div>
                 <div class="form-group">
                   <label for="role">Is admin?</label>
