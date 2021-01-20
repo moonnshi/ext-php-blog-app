@@ -26,7 +26,7 @@ require '../config/config.php';
     else{
       $name=$_POST['name'];
       $email=$_POST['email'];
-      $password=$_POST['password'];
+      $password=password_hash($_POST['password'],PASSWORD_DEFAULT);
 
       // check admin or user role
       $role=(!empty($_POST['role']))?1:0;

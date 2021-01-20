@@ -21,7 +21,6 @@ require '../config/config.php';
       $contentError=empty($_POST['content'])? 'Content is required.':'';
     }
     else{
-      echo 'In Here';
       $id=$_POST['id'];
       $title=$_POST['title'];
       $content=$_POST['content'];
