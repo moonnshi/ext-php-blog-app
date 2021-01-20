@@ -72,13 +72,13 @@
                   <input type="hidden" name="id" value="<?= $result[0]['id'] ?>" />
                   <label for="title">Title</label>
                   <p style="color:red;"><?= !empty($titleError)?'*'.$titleError:''; ?><p>
-                  <input type="text" class="form-control" name="title" value="<?php echo $result[0]['title']?>" placeholder="Enter blog title"/>
+                  <input type="text" class="form-control" name="title" value="<?= escape($result[0]['title']) ?>" placeholder="Enter blog title"/>
                 </div>
                 <div class="form-group">
                   <label for="content">Content</label>
                   <p style="color:red;"><?= !empty($contentError)?'*'.$contentError:''; ?><p>
                   <textarea class="form-control" name="content"  rows="8" cols="80" placeholder="Enter blog content" >
-                    <?php echo $result[0]['content']?>
+                    <?php echo escape($result[0]['content'])?>
                   </textarea>
                 </div>
                 <div class="form-group">

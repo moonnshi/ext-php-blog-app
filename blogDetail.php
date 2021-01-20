@@ -72,13 +72,13 @@
             <div class="card card-widget">
               <div class="card-header" >
                 <div style="text-align:center;float:none;" class="card-title">
-                  <h4 ><?= $result[0]['title'] ?></h4>
+                  <h4 ><?= escape($result[0]['title']) ?></h4>
                 </div>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
                 <img class="img-fluid pad" src="images/<?php echo $result[0]['image']?>" style="height:200px !important" alt="Photo">
-                <p><?= $result[0]['content'] ?></p>
+                <p><?= escape($result[0]['content']) ?></p>
                 <h3>Comments</h3>
                 <a href="/blog" type="button" class="btn btn-default">Go Back</a>
               </div>
@@ -95,12 +95,12 @@
                           $user=$statement->fetchAll();
                         ?>
                         <span class="username">
-                          <?= $user[0]['name'] ?>
+                          <?= escape($user[0]['name']) ?>
                           <span class="text-muted float-right">
-                            <?= $comment['created_at'] ?>
+                            <?= escape($comment['created_at']) ?>
                           </span>
                         </span><!-- /.username -->
-                        <p><?= $comment['content'] ?></p>
+                        <p><?= escape($comment['content']) ?></p>
                       </div>
                       <!-- /.comment-text -->
                     <?php endforeach; ?>

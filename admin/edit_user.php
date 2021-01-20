@@ -70,17 +70,17 @@
                   <label for="name">Name</label>
                   <p style="color:red;"><?= !empty($nameError)?'*'.$nameError:''; ?><p>
                   <input type="hidden" name="id" value="<?= $user[0]['id']?>" />
-                  <input type="text" class="form-control" name="name" value="<?= $user[0]['name']?>" placeholder="Enter name."/>
+                  <input type="text" class="form-control" name="name" value="<?= escape($user[0]['name'])?>" placeholder="Enter name."/>
                 </div>
                 <div class="form-group">
                   <label for="email">Email</label>
                   <p style="color:red;"><?= !empty($emailError)?'*'.$emailError:''; ?><p>
-                  <input type="email" class="form-control"  name="email" value="<?= $user[0]['email']?>" placeholder="Enter email." />
+                  <input type="email" class="form-control"  name="email" value="<?= escape($user[0]['email'])?>" placeholder="Enter email." />
                 </div>
                 <div class="form-group">
                   <label for="password">Password</label>
                   <p style="color:red;"><?= !empty($passwordError)?'*'.$passwordError:''; ?><p>
-                  <input type="password" class="form-control" name="password" value="<?= $user[0]['password']?>" placeholder="Enter password." >
+                  <input type="password" class="form-control" name="password" value="<?= escape($user[0]['password']) ?>" placeholder="Enter password." >
                 </div>
                 <div class="form-group">
                   <label for="role">Is admin?</label>

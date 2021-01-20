@@ -1,7 +1,9 @@
 <?php
 
-  require '../config/config.php';
   session_start();
+  require '../config/config.php';
+  require '../config/common.php';
+
 
   if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
     header('Location:login.php');
@@ -88,8 +90,8 @@
                     <?php $i=1; foreach ($results as $user):?>
                       <tr>
                         <td><?= $offset+$i ?></td>
-                        <td><?= $user['name']?></td>
-                        <td><?= substr($user['email'],0,50)?></td>
+                        <td><?= escape($user['name']); ?></td>
+                        <td><?= substr(escape($user['email']),0,50) ?></td>
                         <td><?= ($user['role'])?'Admin':'User'; ?></td>
                         <td>
                           <div class="btn-group">

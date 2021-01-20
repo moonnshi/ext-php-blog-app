@@ -1,7 +1,8 @@
 <?php
 
-  require '../config/config.php';
   session_start();
+  require '../config/config.php';
+  require '../config/common.php';
 
   // if no login sesion, back to login
   if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
@@ -85,8 +86,8 @@
                     <?php $i=1; foreach ($results as $post):?>
                       <tr>
                         <td><?= $offset+$i ?></td>
-                        <td><?= $post['title']?></td>
-                        <td><?= substr($post['content'],0,100)?></td>
+                        <td><?= escape($post['title']) ?></td>
+                        <td><?= escape(substr($post['content'],0,100)) ?></td>
                         <td>
                           <div class="btn-group">
                             <div class="container">
